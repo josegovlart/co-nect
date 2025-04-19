@@ -1,0 +1,32 @@
+# Arquivos Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+
+# Arquivos temporários
+*.log
+*.tmp
+*.bak
+
+# Arquivos de configuração de IDEs
+.vscode/
+.idea/
+*.swp
+
+# Dados locais
+*.json
+*.csv
+
+# Virtual env (caso use)
+venv/
+env/
+ENV/
+.env/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+storage/data.json
