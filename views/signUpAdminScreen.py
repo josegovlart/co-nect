@@ -25,40 +25,11 @@ class SignUpAdminScreen(ctk.CTk):
     self.labelTitle = ctk.CTkLabel(self, text="Co-Nect", text_color=theme.PRIMARY_COLOR, font=theme.TITLE_FONT)
     self.labelTitle.pack(anchor="w", padx=30, pady=(20, 10))
 
-    self.labelName = ctk.CTkLabel(self, text="Nome completo", font=theme.LABEL_FONT, text_color=theme.PRIMARY_COLOR)
-    self.labelName.pack(anchor="w", padx=30, pady=(10, 0))
-    self.entryName = ctk.CTkEntry(self, border_width=0, fg_color=theme.INPUT_COLOR, placeholder_text="Digite seu nome completo")
-    self.entryName.pack(padx=30, fill="x")
-    self.entryNameBorder = ctk.CTkFrame(self, height=1.5, fg_color=theme.SECONDARY_COLOR)
-    self.entryNameBorder.pack(fill="x", padx=30, pady=(0, 10))
-
-    self.labelEmail = ctk.CTkLabel(self, text="Email", font=theme.LABEL_FONT, text_color=theme.PRIMARY_COLOR)
-    self.labelEmail.pack(anchor="w", padx=30, pady=(10, 0))
-    self.entryEmail = ctk.CTkEntry(self, border_width=0, fg_color=theme.INPUT_COLOR, placeholder_text="Digite seu email")
-    self.entryEmail.pack(padx=30, fill="x")
-    self.entryEmailBorder = ctk.CTkFrame(self, height=1.5, fg_color=theme.SECONDARY_COLOR)
-    self.entryEmailBorder.pack(fill="x", padx=30, pady=(0, 10))
-
-    self.labelCnpj = ctk.CTkLabel(self, text="CNPJ", font=theme.LABEL_FONT, text_color=theme.PRIMARY_COLOR)
-    self.labelCnpj.pack(anchor="w", padx=30, pady=(10, 0))
-    self.entryCnpj = ctk.CTkEntry(self, border_width=0, fg_color=theme.INPUT_COLOR, placeholder_text="Digite seu CNPJ")
-    self.entryCnpj.pack(padx=30, fill="x")
-    self.entryCnpjBorder = ctk.CTkFrame(self, height=1.5, fg_color=theme.SECONDARY_COLOR)
-    self.entryCnpjBorder.pack(fill="x", padx=30, pady=(0, 10))
-
-    self.labelPassword = ctk.CTkLabel(self, text="Senha", font=theme.LABEL_FONT, text_color=theme.PRIMARY_COLOR)
-    self.labelPassword.pack(anchor="w", padx=30, pady=(10, 0))
-    self.entryPassword = ctk.CTkEntry(self, border_width=0, fg_color=theme.INPUT_COLOR, show="*",  placeholder_text="Digite sua senha")
-    self.entryPassword.pack(padx=30, fill="x")
-    self.entryPasswordBorder = ctk.CTkFrame(self, height=1.5, fg_color=theme.SECONDARY_COLOR)
-    self.entryPasswordBorder.pack(fill="x", padx=30, pady=(0, 10))
-
-    self.labelConfirmPassword = ctk.CTkLabel(self, text="Confirme sua senha", font=theme.LABEL_FONT, text_color=theme.PRIMARY_COLOR)
-    self.labelConfirmPassword.pack(anchor="w", padx=30, pady=(10, 0))
-    self.entryConfirmPassword = ctk.CTkEntry(self, border_width=0, fg_color=theme.INPUT_COLOR, show="*",  placeholder_text="Confirme sua senha")
-    self.entryConfirmPassword.pack(padx=30, fill="x")
-    self.entryConfirmPasswordBorder = ctk.CTkFrame(self, height=1.5, fg_color=theme.SECONDARY_COLOR)
-    self.entryConfirmPasswordBorder.pack(fill="x", padx=30, pady=(0, 10))
+    self.entryName = self.createInput("Nome completo", "Digite seu nome completo")
+    self.entryEmail = self.createInput("Email", "Digite seu email")
+    self.entryCnpj = self.createInput("CNPJ", "Digite seu CNPJ")
+    self.entryPassword = self.createInput("Senha", "Digite sua senha", show="*")
+    self.entryConfirmPassword = self.createInput("Confirme sua senha", "Confirme sua senha", show="*")
 
     self.labelStatus = ctk.CTkLabel(self, text="", text_color="red")
     self.labelStatus.pack(pady=(10, 0))
@@ -92,9 +63,20 @@ class SignUpAdminScreen(ctk.CTk):
     else:
       self.labelStatus.configure(text=message, text_color="red")
 
+  def createInput(self, label_text, placeholder, show=None, entry_options={}, label_options={}):
+    label = ctk.CTkLabel(self, text=label_text, font=theme.LABEL_FONT, text_color=theme.PRIMARY_COLOR, **label_options)
+    label.pack(anchor="w", padx=30, pady=(10, 0))
+
+    entry = ctk.CTkEntry(self, border_width=0, fg_color=theme.INPUT_COLOR, placeholder_text=placeholder, show=show, **entry_options)
+    entry.pack(padx=30, fill="x")
+
+    border = ctk.CTkFrame(self, height=1.5, fg_color=theme.SECONDARY_COLOR)
+    border.pack(fill="x", padx=30, pady=(0, 10))
+
+    return entry
+
   def goToLoginScreen(self):
     print("Navegar para tela de login...")
 
   def goBack(self):
     print("Voltando para tela anterior...")
-
