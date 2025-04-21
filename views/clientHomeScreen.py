@@ -11,12 +11,12 @@ class ClientHomeScreen(ctk.CTkFrame):
         self.configure(fg_color=theme.BACKGROUND_COLOR)
 
         self.frameBack = ctk.CTkFrame(self, fg_color="transparent")
-        self.frameBack.pack(padx=30, pady=(20, 0), anchor="w")
+        self.frameBack.pack(padx=0, pady=(20, 0), anchor="w")
 
         self.userGreeting = ctk.StringVar()
 
         self.labelTitle = ctk.CTkLabel(
-            self,
+            self.frameBack,
             text="Co-Nect",
             text_color=theme.PRIMARY_COLOR,
             font=theme.TITLE_FONT

@@ -7,13 +7,12 @@ class AdminHomeScreen(ctk.CTkFrame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
+        self.userGreeting = ctk.StringVar()
 
         self.configure(fg_color=theme.BACKGROUND_COLOR)
 
         self.frameBack = ctk.CTkFrame(self, fg_color="transparent")
         self.frameBack.pack(padx=30, pady=(20, 0), anchor="w")
-
-        self.userGreeting = ctk.StringVar()
 
         self.labelBack = ctk.CTkLabel(
             self.frameBack,
@@ -24,7 +23,6 @@ class AdminHomeScreen(ctk.CTkFrame):
             font=theme.LABEL_FONT
         )
         self.labelBack.pack(expand=True)
-
         self.labelBack.bind("<Button-1>", lambda e: self.goBack())
 
         self.labelSpaces = ctk.CTkLabel(
