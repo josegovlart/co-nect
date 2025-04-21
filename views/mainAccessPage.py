@@ -46,7 +46,7 @@ class MainAccessPage(ctk.CTk):
             self.main_frame,
             text="Quero reservar salas",
             text_color=theme.PRIMARY_COLOR,
-            hover_color="#EEEEEE",
+            hover_color=theme.TRANSPARENT_HOVER,
             corner_radius=3,
             fg_color=theme.BACKGROUND_COLOR,
             border_color=theme.PRIMARY_COLOR,

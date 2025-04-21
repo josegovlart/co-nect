@@ -48,7 +48,7 @@ class AdminHomeScreen(ctk.CTkFrame):
         self.btnReports = ctk.CTkButton(
             self,
             text="Ver relatórios",
-            hover_color=theme.PRIMARY_COLOR_HOVER,
+            hover_color=theme.TRANSPARENT_HOVER,
             text_color=theme.PRIMARY_COLOR,
             corner_radius=3,
             fg_color=theme.BACKGROUND_COLOR,
