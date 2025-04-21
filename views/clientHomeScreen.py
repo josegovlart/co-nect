@@ -15,28 +15,37 @@ class ClientHomeScreen(ctk.CTkFrame):
 
         self.userGreeting = ctk.StringVar()
 
-        self.labelBack = ctk.CTkLabel(
-            self.frameBack,
-            fg_color="#ede7fb",
-            text="←",
-            corner_radius=20,
-            text_color=theme.PRIMARY_COLOR,
-            font=theme.LABEL_FONT
-        )
-        self.labelBack.pack(expand=True)
-
-        self.labelBack.bind("<Button-1>", lambda e: self.goBack())
-
         self.labelTitle = ctk.CTkLabel(
             self,
-            textvariable=self.userGreeting,
+            text="Co-Nect",
             text_color=theme.PRIMARY_COLOR,
             font=theme.TITLE_FONT
         )
         self.labelTitle.pack(anchor="w", padx=30, pady=(20, 10))
 
-    def goBack(self):
-        self.controller.show_frame(self.controller.__class__)
+        self.labelGreeting = ctk.CTkLabel(
+            self,
+            textvariable=self.userGreeting,
+            text_color=theme.TEXT_COLOR,
+            font=theme.TITLE_FONT
+        )
+        self.labelGreeting.pack(anchor="w", padx=30, pady=(20, 10))
+
+        self.labelReservations = ctk.CTkLabel(
+            self,
+            text="Minhas reservas",
+            text_color=theme.TEXT_COLOR,
+            font=theme.LABEL_FONT
+        )
+        self.labelReservations.pack(anchor="w", padx=30, pady=(20, 10))
+
+        self.labelRooms = ctk.CTkLabel(
+            self,
+            text="Salas disponíveis",
+            text_color=theme.TEXT_COLOR,
+            font=theme.LABEL_FONT
+        )
+        self.labelRooms.pack(anchor="w", padx=30, pady=(20, 10))
 
     def onShow(self):
-        self.userGreeting.set(f"Olá, (cliente) {getSession()["name"]}")
+        self.userGreeting.set(f"Olá, {getSession()["name"]}")

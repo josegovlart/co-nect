@@ -27,16 +27,43 @@ class AdminHomeScreen(ctk.CTkFrame):
 
         self.labelBack.bind("<Button-1>", lambda e: self.goBack())
 
-        self.labelTitle = ctk.CTkLabel(
+        self.labelSpaces = ctk.CTkLabel(
             self,
-            textvariable=self.userGreeting,
-            text_color=theme.PRIMARY_COLOR,
-            font=theme.TITLE_FONT
+            text="Meus espaços",
+            text_color=theme.TEXT_COLOR,
+            font=theme.LABEL_FONT
         )
-        self.labelTitle.pack(anchor="w", padx=30, pady=(20, 10))
+        self.labelSpaces.pack(anchor="w", padx=30, pady=(20, 10))
+
+        self.btnCreate = ctk.CTkButton(
+            self,
+            text="Adicionar espaço",
+            hover_color=theme.PRIMARY_COLOR_HOVER,
+            corner_radius=3,
+            fg_color=theme.PRIMARY_COLOR,
+            command=self.goToCreateRoom
+        )
+        self.btnCreate.pack(padx=30, pady=(20, 0), fill="x")
+
+        self.btnReports = ctk.CTkButton(
+            self,
+            text="Ver relatórios",
+            hover_color=theme.PRIMARY_COLOR_HOVER,
+            text_color=theme.PRIMARY_COLOR,
+            corner_radius=3,
+            fg_color=theme.BACKGROUND_COLOR,
+            command=self.goToReports
+        )
+        self.btnReports.pack(padx=30, pady=(20, 0), fill="x")
 
     def goBack(self):
         self.controller.show_frame(self.controller.__class__)
 
     def onShow(self):
-        self.userGreeting.set(f"Olá, (admin) {getSession()["name"]}")
+        self.userGreeting.set(f"Olá, {getSession()["name"]}")
+
+    def goToCreateRoom(self):
+        print("Bora criar a sala")
+
+    def goToReports(self):
+        print("Bora ver esses relatórios")

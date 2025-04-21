@@ -28,4 +28,4 @@ def login(email, password):
     if success and bcrypt.checkpw(password.encode('utf-8'), user["password"].encode('utf-8')):
         setSession(user["name"], user["email"], user["profilePicture"])
         return True, "Usuário autenticado com sucesso.", user["type"]
-    return False, "Email ou senha incorretos."
+    return False, "Email ou senha incorretos.", ""
