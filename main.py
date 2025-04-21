@@ -1,5 +1,5 @@
-from views.signUpAdminScreen import SignUpAdminScreen
+from views.mainAcessPage import MainAcessPage
 
 if __name__ == "__main__":
-    app = SignUpAdminScreen()
+    app = MainAcessPage()
     app.mainloop()

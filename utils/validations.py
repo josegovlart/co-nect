@@ -1,4 +1,3 @@
-
 import re
 
 def is_valid_email(email):
@@ -18,6 +17,17 @@ def validate_admin_signup(name, email, cnpj, password, confirm_password):
         return False, "Email inválido."
     if not is_valid_cnpj(cnpj):
         return False, "CNPJ inválido."
+    if not is_strong_password(password):
+        return False, "A senha deve ter pelo menos 6 caracteres."
+    if password != confirm_password:
+        return False, "As senhas não coincidem."
+    return True, ""
+
+def validate_client_signup(name, email, password, confirm_password):
+    if not all([name, email, password, confirm_password]):
+        return False, "Todos os campos são obrigatórios."
+    if not is_valid_email(email):
+        return False, "Email inválido."
     if not is_strong_password(password):
         return False, "A senha deve ter pelo menos 6 caracteres."
     if password != confirm_password:

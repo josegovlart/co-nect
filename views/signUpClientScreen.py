@@ -1,11 +1,11 @@
 import customtkinter as ctk
-from models.admin import Admin
-from storage.persistence import saveAdmin
 from styles import theme
-from utils.validations import validate_admin_signup
+from utils.validations import validate_client_signup
+from models.client import Client
+from storage.persistence import saveClient
 
 
-class SignUpAdminScreen(ctk.CTkFrame):
+class SignUpClientScreen(ctk.CTkFrame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
@@ -37,7 +37,6 @@ class SignUpAdminScreen(ctk.CTkFrame):
 
         self.entryName = self.createInput("Nome completo", "Digite seu nome completo")
         self.entryEmail = self.createInput("Email", "Digite seu email")
-        self.entryCnpj = self.createInput("CNPJ", "Digite seu CNPJ")
         self.entryPassword = self.createInput("Senha", "Digite sua senha", show="*")
         self.entryConfirmPassword = self.createInput("Confirme sua senha", "Confirme sua senha", show="*")
 
@@ -46,7 +45,7 @@ class SignUpAdminScreen(ctk.CTkFrame):
 
         self.btnCreate = ctk.CTkButton(
             self,
-            text="Alugar minhas salas",
+            text="Criar conta",
             hover_color=theme.PRIMARY_COLOR_HOVER,
             corner_radius=3,
             fg_color=theme.PRIMARY_COLOR,
@@ -76,15 +75,14 @@ class SignUpAdminScreen(ctk.CTkFrame):
     def createAccount(self):
         name = self.entryName.get()
         email = self.entryEmail.get()
-        cnpj = self.entryCnpj.get()
         password = self.entryPassword.get()
         confirm_password = self.entryConfirmPassword.get()
 
-        is_valid, message = validate_admin_signup(name, email, cnpj, password, confirm_password)
+        is_valid, message = validate_client_signup(name, email, password, confirm_password)
 
         if is_valid:
-            newAdmin = Admin(name, email, password, cnpj)
-            saveAdmin(newAdmin)
+            newUser = Client(name, email, password)
+            saveClient(newUser)
             self.labelStatus.configure(text="Conta criada com sucesso!", text_color="green")
         else:
             self.labelStatus.configure(text=message, text_color="red")
