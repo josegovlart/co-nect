@@ -1,12 +1,11 @@
 import customtkinter as ctk
-from models.admin import Admin
-from storage.persistence import saveAdmin
 from styles import theme
-from utils.validations import validate_admin_signup
-from views.loginScreen import LoginScreen
+from session.auth import login
+from views.clientHomeScreen import ClientHomeScreen
+from views.adminHomeScreen import AdminHomeScreen
 
 
-class SignUpAdminScreen(ctk.CTkFrame):
+class LoginScreen(ctk.CTkFrame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
@@ -36,57 +35,38 @@ class SignUpAdminScreen(ctk.CTkFrame):
         )
         self.labelTitle.pack(anchor="w", padx=30, pady=(20, 10))
 
-        self.entryName = self.createInput("Nome completo", "Digite seu nome completo")
         self.entryEmail = self.createInput("Email", "Digite seu email")
-        self.entryCnpj = self.createInput("CNPJ", "Digite seu CNPJ")
         self.entryPassword = self.createInput("Senha", "Digite sua senha", show="*")
-        self.entryConfirmPassword = self.createInput("Confirme sua senha", "Confirme sua senha", show="*")
 
         self.labelStatus = ctk.CTkLabel(self, text="", text_color="red")
         self.labelStatus.pack(pady=(10, 0))
 
         self.btnCreate = ctk.CTkButton(
             self,
-            text="Alugar minhas salas",
+            text="Entrar",
             hover_color=theme.PRIMARY_COLOR_HOVER,
             corner_radius=3,
             fg_color=theme.PRIMARY_COLOR,
-            command=self.createAccount
+            command=self.login
         )
         self.btnCreate.pack(padx=30, pady=(20, 0), fill="x")
 
         self.frameLoginLink = ctk.CTkFrame(self, fg_color="transparent")
         self.frameLoginLink.pack(pady=(20, 0))
 
-        self.loginText = ctk.CTkLabel(
-            self.frameLoginLink,
-            text="Já tem uma conta?",
-            text_color="gray"
-        )
-        self.loginText.pack(side="left")
-
-        self.loginLink = ctk.CTkLabel(
-            self.frameLoginLink,
-            text=" Faça login",
-            text_color="#4B1CFF",
-            cursor="hand2"
-        )
-        self.loginLink.pack(side="left")
-        self.loginLink.bind("<Button-1>", lambda e: self.goToLoginScreen())
-
-    def createAccount(self):
-        name = self.entryName.get()
+    def login(self):
         email = self.entryEmail.get()
-        cnpj = self.entryCnpj.get()
         password = self.entryPassword.get()
-        confirm_password = self.entryConfirmPassword.get()
 
-        is_valid, message = validate_admin_signup(name, email, cnpj, password, confirm_password)
+        if not email or not password:
+            self.labelStatus.configure(text="Preencha todos os campos", text_color="red")
+            return
 
-        if is_valid:
-            newAdmin = Admin(name, email, password, cnpj)
-            saveAdmin(newAdmin)
-            self.labelStatus.configure(text="Conta criada com sucesso!", text_color="green")
+        success, message, type = login(email, password)
+
+        if success:
+            self.labelStatus.configure(text=message, text_color="green")
+            self.goToHomeScreen(type)
         else:
             self.labelStatus.configure(text=message, text_color="red")
 
@@ -115,8 +95,12 @@ class SignUpAdminScreen(ctk.CTkFrame):
 
         return entry
 
-    def goToLoginScreen(self):
-        self.controller.show_frame(LoginScreen)
+
+    def goToHomeScreen(self, type):
+        if type == "admin":
+            self.controller.show_frame(AdminHomeScreen)
+        else:
+            self.controller.show_frame(ClientHomeScreen)
 
     def goBack(self):
         self.controller.show_frame(self.controller.__class__)

@@ -1,6 +1,6 @@
 from models.user import User
 
-class Client(User):
+class CreditCard(User):
   def __init__(self, cardNumber, expireDate, cardHolder):
     self.cardNumber = cardNumber
     self.expireDate = expireDate,

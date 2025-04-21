@@ -3,6 +3,7 @@ from styles import theme
 from utils.validations import validate_client_signup
 from models.client import Client
 from storage.persistence import saveClient
+from views.loginScreen import LoginScreen
 
 
 class SignUpClientScreen(ctk.CTkFrame):
@@ -113,7 +114,7 @@ class SignUpClientScreen(ctk.CTkFrame):
         return entry
 
     def goToLoginScreen(self):
-        print("Bora pro trabalho, nada de FFT hj")
+        self.controller.show_frame(LoginScreen)
 
     def goBack(self):
         self.controller.show_frame(self.controller.__class__)

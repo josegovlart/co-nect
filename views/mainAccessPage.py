@@ -3,8 +3,11 @@ from PIL import Image
 from styles import theme
 from views.signUpAdminScreen import SignUpAdminScreen
 from views.signUpClientScreen import SignUpClientScreen
+from views.loginScreen import LoginScreen
+from views.clientHomeScreen import ClientHomeScreen
+from views.adminHomeScreen import AdminHomeScreen
 
-class MainAcessPage(ctk.CTk):
+class MainAccessPage(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("Co-nect")
@@ -66,13 +69,13 @@ class MainAcessPage(ctk.CTk):
         self.adminSignUpLink.bind("<Button-1>", lambda e: self.goToAdminSignUpScreen())
 
         self.frames = {}
-        for F in (SignUpAdminScreen, SignUpClientScreen):
+        for F in (SignUpAdminScreen, SignUpClientScreen, LoginScreen, ClientHomeScreen, AdminHomeScreen):
             frame = F(parent=self, controller=self)
             self.frames[F] = frame
             frame.place(relwidth=1, relheight=1)
             frame.place_forget()
 
-        self.show_frame(MainAcessPage)
+        self.show_frame(MainAccessPage)
 
     def show_frame(self, frame_class):
         for frame in self.frames.values():
@@ -84,9 +87,11 @@ class MainAcessPage(ctk.CTk):
             self.main_frame.place_forget()
             frame = self.frames[frame_class]
             frame.place(relwidth=1, relheight=1)
+            if hasattr(frame, "onShow"):
+                frame.onShow()
 
     def goToLoginScreen(self):
-        print("Bora pro trabalho, nada de FFT hj")
+        self.show_frame(LoginScreen)
 
     def goToAdminSignUpScreen(self):
         self.show_frame(SignUpAdminScreen)

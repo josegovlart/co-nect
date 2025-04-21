@@ -20,3 +20,13 @@ def saveClient(clients):
     dados["clients"].append(clients.dataToJSON())
     with open(DATA_FILE_PATH, "w") as f:
       json.dump(dados, f, indent=2)
+
+def getUserJSON(email):
+    data = loadData()
+    for client in data["clients"]:
+        if (client["email"] == email):
+            return True, client
+    for admin in data["admins"]:
+        if (admin["email"] == email):
+            return True, admin
+    return False, None
