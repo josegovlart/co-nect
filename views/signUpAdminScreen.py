@@ -4,6 +4,8 @@ from storage.persistence import saveAdmin
 from styles import theme
 from utils.validations import validate_admin_signup
 from views.loginScreen import LoginScreen
+from views.adminHomeScreen import AdminHomeScreen
+from session.auth import login
 
 
 class SignUpAdminScreen(ctk.CTkFrame):
@@ -87,6 +89,7 @@ class SignUpAdminScreen(ctk.CTkFrame):
             newAdmin = Admin(name, email, password, cnpj)
             saveAdmin(newAdmin)
             self.labelStatus.configure(text="Conta criada com sucesso!", text_color="green")
+            self.after(2000, lambda: self.loginAndNavigate(email, password))
         else:
             self.labelStatus.configure(text=message, text_color="red")
 
@@ -117,6 +120,10 @@ class SignUpAdminScreen(ctk.CTkFrame):
 
     def goToLoginScreen(self):
         self.controller.show_frame(LoginScreen)
+
+    def loginAndNavigate(self, email, password):
+        login(email, password)
+        self.controller.show_frame(AdminHomeScreen)
 
     def goBack(self):
         self.controller.show_frame(self.controller.__class__)

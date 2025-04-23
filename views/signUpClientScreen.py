@@ -4,7 +4,8 @@ from utils.validations import validate_client_signup
 from models.client import Client
 from storage.persistence import saveClient
 from views.loginScreen import LoginScreen
-
+from views.clientHomeScreen import ClientHomeScreen
+from session.auth import login
 
 class SignUpClientScreen(ctk.CTkFrame):
     def __init__(self, parent, controller):
@@ -85,6 +86,7 @@ class SignUpClientScreen(ctk.CTkFrame):
             newUser = Client(name, email, password)
             saveClient(newUser)
             self.labelStatus.configure(text="Conta criada com sucesso!", text_color="green")
+            self.after(2000, lambda: self.loginAndNavigate(email, password))
         else:
             self.labelStatus.configure(text=message, text_color="red")
 
@@ -115,6 +117,10 @@ class SignUpClientScreen(ctk.CTkFrame):
 
     def goToLoginScreen(self):
         self.controller.show_frame(LoginScreen)
+
+    def loginAndNavigate(self, email, password):
+        login(email, password)
+        self.controller.show_frame(ClientHomeScreen)
 
     def goBack(self):
         self.controller.show_frame(self.controller.__class__)
