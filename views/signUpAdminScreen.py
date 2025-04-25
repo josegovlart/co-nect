@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from controllers.admin import AdminController
 from models.admin import Admin
 from storage.persistence import saveAdmin
 from styles import theme
@@ -83,12 +84,10 @@ class SignUpAdminScreen(ctk.CTkFrame):
         password = self.entryPassword.get()
         confirm_password = self.entryConfirmPassword.get()
 
-        is_valid, message = validate_admin_signup(name, email, cnpj, password, confirm_password)
+        success, message = AdminController.createAdminAccount(name, email, cnpj, password, confirm_password)
 
-        if is_valid:
-            newAdmin = Admin(name, email, password, cnpj)
-            saveAdmin(newAdmin)
-            self.labelStatus.configure(text="Conta criada com sucesso!", text_color="green")
+        if success:
+            self.labelStatus.configure(text=message, text_color="green")
             self.after(2000, lambda: self.loginAndNavigate(email, password))
         else:
             self.labelStatus.configure(text=message, text_color="red")
@@ -122,7 +121,7 @@ class SignUpAdminScreen(ctk.CTkFrame):
         self.controller.show_frame(LoginScreen)
 
     def loginAndNavigate(self, email, password):
-        login(email, password)
+        AdminController.authenticateAdmin(email, password)
         self.controller.show_frame(AdminHomeScreen)
 
     def goBack(self):

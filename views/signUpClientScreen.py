@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from controllers.client import ClientController
 from styles import theme
 from utils.validations import validate_client_signup
 from models.client import Client
@@ -80,12 +81,10 @@ class SignUpClientScreen(ctk.CTkFrame):
         password = self.entryPassword.get()
         confirm_password = self.entryConfirmPassword.get()
 
-        is_valid, message = validate_client_signup(name, email, password, confirm_password)
+        success, message = ClientController.createClientAccount(name, email, password, confirm_password)
 
-        if is_valid:
-            newUser = Client(name, email, password)
-            saveClient(newUser)
-            self.labelStatus.configure(text="Conta criada com sucesso!", text_color="green")
+        if success:
+            self.labelStatus.configure(text=message, text_color="green")
             self.after(2000, lambda: self.loginAndNavigate(email, password))
         else:
             self.labelStatus.configure(text=message, text_color="red")
@@ -119,7 +118,7 @@ class SignUpClientScreen(ctk.CTkFrame):
         self.controller.show_frame(LoginScreen)
 
     def loginAndNavigate(self, email, password):
-        login(email, password)
+        ClientController.authenticateClient(email, password)
         self.controller.show_frame(ClientHomeScreen)
 
     def goBack(self):

@@ -30,3 +30,7 @@ def getUserJSON(email):
         if (admin["email"] == email):
             return True, admin
     return False, None
+
+def userExists(email):
+    exists, _ = getUserJSON(email)
+    return exists
