@@ -5,8 +5,11 @@ DATA_FILE_PATH = "storage/data.json"
 
 def loadData():
     if os.path.exists(DATA_FILE_PATH):
-        with open(DATA_FILE_PATH, "r") as f:
-            return json.load(f)
+        try:
+            with open(DATA_FILE_PATH, "r") as f:
+                return json.load(f)
+        except json.JSONDecodeError:
+            return {"admins": [], "clients": []}
     return {"admins": [], "clients": []}
 
 def saveAdmin(admin):
