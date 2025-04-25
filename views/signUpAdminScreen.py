@@ -1,12 +1,8 @@
 import customtkinter as ctk
 from controllers.admin import AdminController
-from models.admin import Admin
-from storage.persistence import saveAdmin
 from styles import theme
-from utils.validations import validate_admin_signup
 from views.loginScreen import LoginScreen
 from views.adminHomeScreen import AdminHomeScreen
-from session.auth import login
 
 
 class SignUpAdminScreen(ctk.CTkFrame):

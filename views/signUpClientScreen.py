@@ -1,12 +1,8 @@
 import customtkinter as ctk
 from controllers.client import ClientController
 from styles import theme
-from utils.validations import validate_client_signup
-from models.client import Client
-from storage.persistence import saveClient
 from views.loginScreen import LoginScreen
 from views.clientHomeScreen import ClientHomeScreen
-from session.auth import login
 
 class SignUpClientScreen(ctk.CTkFrame):
     def __init__(self, parent, controller):
