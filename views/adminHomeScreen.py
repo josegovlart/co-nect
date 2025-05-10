@@ -70,7 +70,7 @@ class AdminHomeScreen(ctk.CTkFrame):
             return
 
         for room in rooms:
-            card = RoomCard(self.scrollFrame, room)
+            card = RoomCard(self.scrollFrame, room, self.controller)
             card.pack(padx=0, pady=10, fill="x")
 
     def onShow(self):

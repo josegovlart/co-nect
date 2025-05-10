@@ -2,6 +2,7 @@ import customtkinter as ctk
 from PIL import Image
 from styles import theme
 from views.createRoomScreen import CreateRoomScreen
+from views.editRoomScreen import EditRoomScreen
 from views.signUpAdminScreen import SignUpAdminScreen
 from views.signUpClientScreen import SignUpClientScreen
 from views.loginScreen import LoginScreen
@@ -70,7 +71,13 @@ class MainAccessPage(ctk.CTk):
         self.adminSignUpLink.bind("<Button-1>", lambda e: self.goToAdminSignUpScreen())
 
         self.frames = {}
-        for F in (SignUpAdminScreen, SignUpClientScreen, LoginScreen, ClientHomeScreen, AdminHomeScreen, CreateRoomScreen):
+        for F in (SignUpAdminScreen,
+                  SignUpClientScreen,
+                  LoginScreen,
+                  ClientHomeScreen,
+                  AdminHomeScreen,
+                  CreateRoomScreen,
+                  EditRoomScreen):
             frame = F(parent=self, controller=self)
             self.frames[F] = frame
             frame.place(relwidth=1, relheight=1)
@@ -78,7 +85,7 @@ class MainAccessPage(ctk.CTk):
 
         self.show_frame(MainAccessPage)
 
-    def show_frame(self, frame_class):
+    def show_frame(self, frame_class, **kwargs):
         for frame in self.frames.values():
             frame.place_forget()
 
@@ -87,7 +94,12 @@ class MainAccessPage(ctk.CTk):
         else:
             self.main_frame.place_forget()
             frame = self.frames[frame_class]
+
+            if hasattr(frame, "set_data") and kwargs:
+                frame.set_data(**kwargs)
+
             frame.place(relwidth=1, relheight=1)
+
             if hasattr(frame, "onShow"):
                 frame.onShow()
 

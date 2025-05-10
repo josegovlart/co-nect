@@ -52,3 +52,37 @@ def getRooms(email):
             result.append(room)
 
     return result
+
+def editRoom(newData):
+    dados = loadData()
+    for room in dados["rooms"]:
+        if room["id"] == newData.room_id:
+            if newData.adminEmail != room["adminEmail"]:
+                return False, "Você não tem permissão para editar."
+            room["name"] = newData.name
+            room["address"] = newData.address
+            room["description"] = newData.description
+            room["price"] = newData.price
+            break
+    else:
+        return False, "Sala não encontrada."
+
+    with open(DATA_FILE_PATH, "w") as f:
+        json.dump(dados, f, indent=2)
+
+    return True, "Sala atualizada com sucesso!"
+
+def deleteRoom(roomId, adminEmail):
+    dados = loadData()
+    for i, room in enumerate(dados["rooms"]):
+        if room["id"] == roomId:
+            if room["adminEmail"] != adminEmail:
+                return False, "Você não tem permissão para deletar esta sala."
+
+            del dados["rooms"][i]
+            with open(DATA_FILE_PATH, "w") as f:
+                json.dump(dados, f, indent=2)
+
+            return True, "Sala deletada com sucesso."
+
+    return False, "Sala não encontrada."
