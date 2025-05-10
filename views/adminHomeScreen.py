@@ -1,7 +1,9 @@
 import customtkinter as ctk
+from components.roomCard import RoomCard
+from controllers.room import RoomController
+from views.createRoomScreen import CreateRoomScreen
 from styles import theme
 from session.auth import getSession
-
 
 class AdminHomeScreen(ctk.CTkFrame):
     def __init__(self, parent, controller):
@@ -11,57 +13,71 @@ class AdminHomeScreen(ctk.CTkFrame):
 
         self.configure(fg_color=theme.BACKGROUND_COLOR)
 
-        self.frameBack = ctk.CTkFrame(self, fg_color="transparent")
-        self.frameBack.pack(padx=30, pady=(20, 0), anchor="w")
+        self.mainLayout = ctk.CTkFrame(self, fg_color="transparent")
+        self.mainLayout.pack(fill="both", expand=True, padx=30, pady=30)
 
-        self.labelBack = ctk.CTkLabel(
-            self.frameBack,
-            fg_color="#ede7fb",
-            text="←",
-            corner_radius=20,
+        self.labelTitle = ctk.CTkLabel(
+            self.mainLayout,
+            text="Co-Nect",
             text_color=theme.PRIMARY_COLOR,
-            font=theme.LABEL_FONT
+            font=theme.TITLE_FONT
         )
-        self.labelBack.pack(expand=True)
-        self.labelBack.bind("<Button-1>", lambda e: self.goBack())
+        self.labelTitle.pack(anchor="w", pady=(0, 10))
 
         self.labelSpaces = ctk.CTkLabel(
-            self,
+            self.mainLayout,
             text="Meus espaços",
             text_color=theme.TEXT_COLOR,
             font=theme.LABEL_FONT
         )
-        self.labelSpaces.pack(anchor="w", padx=30, pady=(20, 10))
+        self.labelSpaces.pack(anchor="w", pady=(0, 10))
+
+        self.scrollFrame = ctk.CTkScrollableFrame(
+            self.mainLayout,
+            fg_color="transparent",
+            height=380
+        )
+        self.scrollFrame.pack(fill="both", expand=False)
 
         self.btnCreate = ctk.CTkButton(
-            self,
+            self.mainLayout,
             text="Adicionar espaço",
             hover_color=theme.PRIMARY_COLOR_HOVER,
-            corner_radius=3,
+            corner_radius=6,
             fg_color=theme.PRIMARY_COLOR,
             command=self.goToCreateRoom
         )
-        self.btnCreate.pack(padx=30, pady=(20, 0), fill="x")
+        self.btnCreate.pack(pady=(20, 10), fill="x")
 
         self.btnReports = ctk.CTkButton(
-            self,
+            self.mainLayout,
             text="Ver relatórios",
             hover_color=theme.TRANSPARENT_HOVER,
             text_color=theme.PRIMARY_COLOR,
-            corner_radius=3,
+            corner_radius=6,
             fg_color=theme.BACKGROUND_COLOR,
             command=self.goToReports
         )
-        self.btnReports.pack(padx=30, pady=(20, 0), fill="x")
+        self.btnReports.pack(pady=(0, 10), fill="x")
 
-    def goBack(self):
-        self.controller.show_frame(self.controller.__class__)
+    def showRooms(self):
+        for widget in self.scrollFrame.winfo_children():
+            widget.destroy()
+
+        rooms = RoomController.getRoomsByAdminEmail(getSession()["email"])
+        if not rooms:
+            ctk.CTkLabel(self.scrollFrame, text="Você não tem salas cadastradas.", text_color=theme.TEXT_COLOR).pack()
+            return
+
+        for room in rooms:
+            card = RoomCard(self.scrollFrame, room)
+            card.pack(padx=0, pady=10, fill="x")
 
     def onShow(self):
-        self.userGreeting.set(f"Olá, {getSession()["name"]}")
+        self.showRooms()
 
     def goToCreateRoom(self):
-        print("Bora criar a sala")
+        self.controller.show_frame(CreateRoomScreen)
 
     def goToReports(self):
         print("Bora ver esses relatórios")

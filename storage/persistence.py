@@ -9,8 +9,8 @@ def loadData():
             with open(DATA_FILE_PATH, "r") as f:
                 return json.load(f)
         except json.JSONDecodeError:
-            return {"admins": [], "clients": []}
-    return {"admins": [], "clients": []}
+            return {"admins": [], "clients": [], "rooms": []}
+    return {"admins": [], "clients": [], "rooms": []}
 
 def saveAdmin(admin):
     dados = loadData()
@@ -37,3 +37,18 @@ def getUserJSON(email):
 def userExists(email):
     exists, _ = getUserJSON(email)
     return exists
+
+def saveRoom(room):
+    dados = loadData()
+    dados["rooms"].append(room.dataToJSON())
+    with open(DATA_FILE_PATH, "w") as f:
+        json.dump(dados, f, indent=2)
+
+def getRooms(email):
+    data = loadData()
+    result = []
+    for room in data["rooms"]:
+        if room["adminEmail"] == email:
+            result.append(room)
+
+    return result

@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from PIL import Image
 from styles import theme
+from views.createRoomScreen import CreateRoomScreen
 from views.signUpAdminScreen import SignUpAdminScreen
 from views.signUpClientScreen import SignUpClientScreen
 from views.loginScreen import LoginScreen
@@ -69,7 +70,7 @@ class MainAccessPage(ctk.CTk):
         self.adminSignUpLink.bind("<Button-1>", lambda e: self.goToAdminSignUpScreen())
 
         self.frames = {}
-        for F in (SignUpAdminScreen, SignUpClientScreen, LoginScreen, ClientHomeScreen, AdminHomeScreen):
+        for F in (SignUpAdminScreen, SignUpClientScreen, LoginScreen, ClientHomeScreen, AdminHomeScreen, CreateRoomScreen):
             frame = F(parent=self, controller=self)
             self.frames[F] = frame
             frame.place(relwidth=1, relheight=1)

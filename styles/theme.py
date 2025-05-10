@@ -9,3 +9,5 @@ SECONDARY_TEXT_COLOR = "#818181"
 
 TITLE_FONT = ("Arial", 24, "bold")
 LABEL_FONT = ("Arial", 14, "bold")
+CARD_TITLE_FONT = ("Arial", 11, "bold")
+DESCRIPTION_FONT = ("Arial", 10)

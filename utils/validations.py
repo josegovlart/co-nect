@@ -33,3 +33,13 @@ def validate_client_signup(name, email, password, confirm_password):
     if password != confirm_password:
         return False, "As senhas não coincidem."
     return True, ""
+
+def validate_room_create(name, address, description, price):
+    if not all([name, address, description, price]):
+        return False, "Todos os campos são obrigatórios."
+
+    pattern = r"^\d{1,5}(,\d{2})?$"
+    if not re.match(pattern, price):
+        return False, "O preço por hora deve estar no formato dd,dd (ex: 50,00)."
+
+    return True, ""
