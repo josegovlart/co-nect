@@ -2,6 +2,7 @@ import customtkinter as ctk
 from PIL import Image
 from styles import theme
 from views.createRoomScreen import CreateRoomScreen
+from views.createReservationScreen import CreateReservationScreen
 from views.editRoomScreen import EditRoomScreen
 from views.signUpAdminScreen import SignUpAdminScreen
 from views.signUpClientScreen import SignUpClientScreen
@@ -77,6 +78,7 @@ class MainAccessPage(ctk.CTk):
                   ClientHomeScreen,
                   AdminHomeScreen,
                   CreateRoomScreen,
+                  CreateReservationScreen,
                   EditRoomScreen):
             frame = F(parent=self, controller=self)
             self.frames[F] = frame

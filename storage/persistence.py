@@ -53,6 +53,17 @@ def getRooms(email):
 
     return result
 
+def getAllRooms():
+    data = loadData()
+    return data.get("rooms", [])
+
+def getRoomById(room_id):
+    data = loadData()
+    for room in data.get("rooms", []):
+        if room["id"] == room_id:
+            return room
+    return None
+
 def editRoom(newData):
     dados = loadData()
     for room in dados["rooms"]:
@@ -86,3 +97,39 @@ def deleteRoom(roomId, adminEmail):
             return True, "Sala deletada com sucesso."
 
     return False, "Sala não encontrada."
+
+def saveReservation(reservation):
+    print(reservation)
+    data = loadData()
+    if "reservations" not in data:
+        data["reservations"] = []
+    data["reservations"].append(reservation.dataToJSON())
+    with open(DATA_FILE_PATH, "w") as f:
+        json.dump(data, f, indent=2)
+
+def getReservationsByRoom(room_id):
+    data = loadData()
+    return [r for r in data.get("reservations", []) if r["room"]["id"] == room_id]
+
+def getReservationsByClient(email):
+    data = loadData()
+    result = []
+
+    for reservation in data.get("reservations", []):
+        try:
+            if (isinstance(reservation, dict) and 
+                isinstance(reservation.get("client"), dict) and 
+                reservation["client"].get("email") == email):
+                
+                if "room" in reservation and isinstance(reservation["room"], dict):
+                    room = getRoomById(reservation["room"].get("id"))
+                    if room:
+                        reservation["room"] = room
+                
+                result.append(reservation)
+                
+        except (KeyError, TypeError) as e:
+            print(f"Reserva com estrutura inválida ignorada: {e}")
+            continue
+            
+    return result

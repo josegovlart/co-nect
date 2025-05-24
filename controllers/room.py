@@ -1,6 +1,6 @@
 import uuid
 from models.room import Room
-from storage.persistence import saveRoom, getRooms, editRoom, deleteRoom
+from storage.persistence import saveRoom, getRooms, editRoom, deleteRoom, getAllRooms, getReservationsByClient
 from utils.validations import validate_room_create
 
 
@@ -22,6 +22,14 @@ class RoomController:
     @staticmethod
     def getRoomsByAdminEmail(admin_email):
         return getRooms(admin_email)
+    
+    @staticmethod
+    def getReservations(client_email):
+        return getReservationsByClient(client_email)
+
+    @staticmethod
+    def getAll():
+        return getAllRooms()
 
     @staticmethod
     def getRoomById(room_id):
