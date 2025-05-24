@@ -12,7 +12,6 @@ class Reservation:
         self.client = client
 
     def dataToJSON(self):
-        print(self.room)
         return {
             "dateTime": self.dateTime,
             "duration": self.duration,

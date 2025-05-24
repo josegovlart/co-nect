@@ -99,7 +99,6 @@ def deleteRoom(roomId, adminEmail):
     return False, "Sala não encontrada."
 
 def saveReservation(reservation):
-    print(reservation)
     data = loadData()
     if "reservations" not in data:
         data["reservations"] = []

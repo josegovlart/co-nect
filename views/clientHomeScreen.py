@@ -44,18 +44,8 @@ class ClientHomeScreen(ctk.CTkFrame):
         )
         self.labelReservations.pack(anchor="w", padx=30, pady=(20, 10))
         
-        
-        # header = ctk.CTkLabel(self, text="Co-Nect", text_color="#5A00E5", font=("Helvetica", 22, "bold"))
-        # header.pack(pady=(20, 5))
-
-        # welcome = ctk.CTkLabel(self, text="Olá, Felipe", font=("Helvetica", 18, "bold"), text_color="black")
-        # welcome.pack(anchor="w", padx=20)
-
         self.reservationSection = ctk.CTkFrame(self, fg_color="transparent")
         self.reservationSection.pack(fill="x", padx=20, pady=(15, 5))
-
-        # my_res_label = ctk.CTkLabel(self.reservationSection, text="Minhas reservas", font=("Helvetica", 16, "bold"), text_color="black")
-        # my_res_label.pack(anchor="w", pady=(0, 5))
 
         self.scrollable_frame = self.createHorizontalScrollableFrame(self.reservationSection)
 
@@ -120,7 +110,6 @@ class ClientHomeScreen(ctk.CTkFrame):
         print(f"Reserva selecionada: {name} - {date} ({duration} horas)")
 
     def createReservation(self):
-        print("go to reservation screen")
         self.controller.show_frame(CreateReservationScreen, reservationData=self.reservationData)
 
     def createReservationCard(self, name, dateTime, duration, imagePath):
@@ -195,7 +184,6 @@ class ClientHomeScreen(ctk.CTkFrame):
         ).pack(anchor="w", pady=0)
 
         def on_card_click(event):
-            print(f"Card clicado: {name}")
             self.handleReservationClick(name, dateTime, duration)
 
         card.bind("<Button-1>", on_card_click)
