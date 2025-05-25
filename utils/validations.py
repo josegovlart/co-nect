@@ -54,13 +54,12 @@ def validate_reservation_fields(date, time):
 def is_time_conflict(existing_start, existing_duration, new_start, new_duration):
     fmt = "%Y-%m-%d %H:%M"
     e_start = datetime.strptime(existing_start, fmt)
-    
-    # Converte durações para inteiros se forem strings
-    existing_duration = int(existing_duration) if isinstance(existing_duration, str) else existing_duration
-    new_duration = int(new_duration) if isinstance(new_duration, str) else new_duration
-    
-    e_end = e_start + timedelta(minutes=existing_duration)
     n_start = datetime.strptime(new_start, fmt)
-    n_end = n_start + timedelta(minutes=new_duration)
+
+    existing_duration = int(existing_duration)
+    new_duration = int(new_duration)
+
+    e_end = e_start + timedelta(hours=existing_duration)
+    n_end = n_start + timedelta(hours=new_duration)
 
     return not (n_end <= e_start or n_start >= e_end)
