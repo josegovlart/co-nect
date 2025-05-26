@@ -9,6 +9,8 @@ from views.signUpClientScreen import SignUpClientScreen
 from views.loginScreen import LoginScreen
 from views.clientHomeScreen import ClientHomeScreen
 from views.adminHomeScreen import AdminHomeScreen
+from views.reservationDetailsScreen import ReservationDetailsScreen
+
 
 class MainAccessPage(ctk.CTk):
     def __init__(self):
@@ -79,7 +81,8 @@ class MainAccessPage(ctk.CTk):
                   AdminHomeScreen,
                   CreateRoomScreen,
                   CreateReservationScreen,
-                  EditRoomScreen):
+                  EditRoomScreen,
+                  ReservationDetailsScreen):
             frame = F(parent=self, controller=self)
             self.frames[F] = frame
             frame.place(relwidth=1, relheight=1)

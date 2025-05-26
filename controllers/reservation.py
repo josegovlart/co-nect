@@ -1,11 +1,11 @@
+import uuid
 from models.reservation import Reservation
-from storage.persistence import saveReservation, getReservationsByRoom, getRoomById, getUserJSON
+from storage.persistence import saveReservation, getReservationsByRoom, getRoomById, getUserJSON, getReservationById
 from utils.validations import is_time_conflict, validate_reservation_fields
 
 class ReservationController:
     @staticmethod
-    @staticmethod
-    def isRoomAvailable(room_id, new_start, new_duration):
+    def isRoomAvailable(room_id, new_start, new_duration, reservation_id=None):
         # Validação de tipos
         if isinstance(new_duration, str):
             try:
@@ -19,7 +19,7 @@ class ReservationController:
             existing_start = r["dateTime"]
             existing_duration = r["duration"]
             
-            if is_time_conflict(existing_start, existing_duration, new_start, new_duration):
+            if is_time_conflict(existing_start, existing_duration, new_start, new_duration) and r["id"] != reservation_id:
                 return False
         return True
 
@@ -28,7 +28,8 @@ class ReservationController:
         if not ReservationController.isRoomAvailable(room["id"], dateTime, duration):
             return False, "Sala já reservada nesse horário."
 
-        reservation = Reservation(dateTime, duration, room, latestReceipt, client)
+        reservation_id = str(uuid.uuid4())
+        reservation = Reservation(reservation_id, dateTime, duration, room, latestReceipt, client)
         saveReservation(reservation)
         return True, "Reserva realizada com sucesso!"
     
@@ -39,3 +40,7 @@ class ReservationController:
     @staticmethod
     def clientData(email):
         return getUserJSON(email)
+
+    @staticmethod
+    def getReservationById(reservation_id):
+        return getReservationById(reservation_id)

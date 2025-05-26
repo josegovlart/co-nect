@@ -132,3 +132,10 @@ def getReservationsByClient(email):
             continue
             
     return result
+
+def getReservationById(reservation_id):
+    data = loadData()
+    for reservation in data.get("reservations", []):
+        if reservation["id"] == reservation_id:
+            return reservation
+    return None

@@ -4,7 +4,8 @@ from models.receipt import Receipt
 
 
 class Reservation:
-    def __init__(self, dateTime, duration, room: Room, latestReceipt: Receipt, client: Client):
+    def __init__(self, reservation_id, dateTime, duration, room: Room, latestReceipt: Receipt, client: Client):
+        self.reservation_id = reservation_id
         self.dateTime = dateTime
         self.duration = duration
         self.room = room
@@ -13,6 +14,7 @@ class Reservation:
 
     def dataToJSON(self):
         return {
+            "id": self.reservation_id,
             "dateTime": self.dateTime,
             "duration": self.duration,
             "room": self.room,

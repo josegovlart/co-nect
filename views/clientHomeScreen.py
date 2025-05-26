@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from controllers.room import RoomController
 from views.createReservationScreen import CreateReservationScreen
+from views.reservationDetailsScreen import ReservationDetailsScreen
 import tkinter as tk
 from styles import theme
 from session.auth import getSession
@@ -89,8 +90,9 @@ class ClientHomeScreen(ctk.CTkFrame):
             image_path = room_data.get("imagePath", "")
             date_time = reservation["dateTime"]
             duration = reservation["duration"]
+            reservation_id = reservation["id"]
 
-            self.createReservationCard(room_name, date_time, duration, image_path)
+            self.createReservationCard(reservation_id, room_name, date_time, duration, image_path)
 
     def format_date(self, date_time_str):
         dt = datetime.strptime(date_time_str, "%Y-%m-%d %H:%M")
@@ -106,13 +108,13 @@ class ClientHomeScreen(ctk.CTkFrame):
         self.showRooms()
         self.showReservations()
 
-    def handleReservationClick(self, name, date, duration):
-        print(f"Reserva selecionada: {name} - {date} ({duration} horas)")
+    def handleReservationClick(self, reservationId):
+        self.controller.show_frame(ReservationDetailsScreen, reservationId=reservationId);
 
     def createReservation(self):
         self.controller.show_frame(CreateReservationScreen, reservationData=self.reservationData)
 
-    def createReservationCard(self, name, dateTime, duration, imagePath):
+    def createReservationCard(self, reservation_id, name, dateTime, duration, imagePath):
         card = ctk.CTkFrame(
             self.scrollable_frame,
             corner_radius=8,
@@ -184,7 +186,7 @@ class ClientHomeScreen(ctk.CTkFrame):
         ).pack(anchor="w", pady=0)
 
         def on_card_click(event):
-            self.handleReservationClick(name, dateTime, duration)
+            self.handleReservationClick(reservation_id)
 
         card.bind("<Button-1>", on_card_click)
     
