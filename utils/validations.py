@@ -63,3 +63,24 @@ def is_time_conflict(existing_start, existing_duration, new_start, new_duration)
     n_end = n_start + timedelta(hours=new_duration)
 
     return not (n_end <= e_start or n_start >= e_end)
+
+def validate_blank_fields(fields):
+    return all(fields)
+
+def is_valid_date_format(date):
+    try:
+        datetime.strptime(date, "%d/%m/%Y")
+        return True
+    except ValueError:
+        return False
+
+def is_valid_time_format(time):
+    try:
+        datetime.strptime(time, "%H:%M")
+        return True
+    except ValueError:
+        return False
+
+def is_after_now(dateTime):
+    dt = datetime.strptime(dateTime, "%d/%m/%Y %H:%M")
+    return dt > datetime.now()

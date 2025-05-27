@@ -84,7 +84,7 @@ class CreateReservationScreen(ctk.CTkFrame):
         room = self.room
         latestReceipt = "IMPLEMENTAR"  # implementar isso
 
-        is_available = ReservationController.isRoomAvailable(self.room["id"], dateTime, duration)
+        is_available = ReservationController.is_room_available(self.room["id"], dateTime, duration)
 
         if not is_available:
             self.labelStatus.configure(text="Sala já reservada nesse horário.", text_color="red")

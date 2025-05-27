@@ -139,3 +139,16 @@ def getReservationById(reservation_id):
         if reservation["id"] == reservation_id:
             return reservation
     return None
+
+def erase_reservation_by_id(reservation_id):
+    data = loadData()
+    data["reservations"] = [r for r in data["reservations"] if r["id"] != reservation_id]
+    with open(DATA_FILE_PATH, "w") as f:
+        json.dump(data, f, indent=2)
+
+def append_raw_json(record, jsonStr):
+    data = loadData()
+    data[record].append(jsonStr)
+    with open(DATA_FILE_PATH, "w") as f:
+        json.dump(data, f, indent=2)
+

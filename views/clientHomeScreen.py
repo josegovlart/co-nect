@@ -108,8 +108,8 @@ class ClientHomeScreen(ctk.CTkFrame):
         self.showRooms()
         self.showReservations()
 
-    def handleReservationClick(self, reservationId):
-        self.controller.show_frame(ReservationDetailsScreen, reservationId=reservationId);
+    def handle_reservation_click(self, reservationId):
+        self.controller.show_frame(ReservationDetailsScreen, reservationId=reservationId)
 
     def createReservation(self):
         self.controller.show_frame(CreateReservationScreen, reservationData=self.reservationData)
@@ -186,7 +186,7 @@ class ClientHomeScreen(ctk.CTkFrame):
         ).pack(anchor="w", pady=0)
 
         def on_card_click(event):
-            self.handleReservationClick(reservation_id)
+            self.handle_reservation_click(reservation_id)
 
         card.bind("<Button-1>", on_card_click)
     
