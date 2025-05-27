@@ -191,13 +191,13 @@ class ClientHomeScreen(ctk.CTkFrame):
             self.handle_reservation_click(reservation_id)
 
         card.bind("<Button-1>", on_card_click)
-        queue = [card]
-        while len(queue):
-            cur = queue.pop()
+        stack = [card]
+        while len(stack):
+            cur = stack.pop()
             for child in cur.winfo_children():
                 child.configure(cursor="hand2")
                 child.bind("<Button-1>", on_card_click)
-                queue.append(child)
+                stack.append(child)
 
         return card
 
