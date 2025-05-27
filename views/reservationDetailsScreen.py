@@ -52,7 +52,7 @@ class ReservationDetailsScreen(ctk.CTkFrame):
         self.time_entry = ctk.CTkEntry(self, placeholder_text="Ex: 09:00")
         self.time_entry.place(x=30, y=500)
 
-        self.labelStatus = ctk.CTkLabel(self, text="", text_color="red")
+        self.labelStatus = ctk.CTkLabel(self, text="", text_color="red", wraplength=250)
         self.labelStatus.place(x=50, y=540)
 
         reschedule_button = ctk.CTkButton(
