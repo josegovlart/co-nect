@@ -78,6 +78,8 @@ class ClientHomeScreen(ctk.CTkFrame):
             self.createRoomCard(self.scrollFrame, name, address, price, roomId).pack(pady=5)
 
     def showReservations(self):
+        for widget in self.scrollable_frame.winfo_children():
+            widget.destroy()
         reservations = RoomController.getReservations(getSession()["email"])
 
         if not reservations:
@@ -118,8 +120,8 @@ class ClientHomeScreen(ctk.CTkFrame):
         card = ctk.CTkFrame(
             self.scrollable_frame,
             corner_radius=8,
-            width=120,
-            height=100,
+            width=150,
+            height=120,
             fg_color='white',
             border_width=1,
             border_color='#e0e0e0',
@@ -143,7 +145,7 @@ class ClientHomeScreen(ctk.CTkFrame):
         img.putalpha(ImageOps.invert(mask).convert("L"))
         photo = ImageTk.PhotoImage(img)
 
-        img_container = ctk.CTkFrame(card, fg_color="transparent", height=50)
+        img_container = ctk.CTkFrame(card, fg_color="transparent", width=150, height=50)
         img_container.pack(fill="x", padx=0, pady=0)
 
         image_label = ctk.CTkLabel(img_container, image=photo, text="")
@@ -189,10 +191,14 @@ class ClientHomeScreen(ctk.CTkFrame):
             self.handle_reservation_click(reservation_id)
 
         card.bind("<Button-1>", on_card_click)
-    
-        card.bind("<Enter>", lambda e: card.configure(cursor="hand2"))
-        card.bind("<Leave>", lambda e: card.configure(cursor=""))
-        
+        queue = [card]
+        while len(queue):
+            cur = queue.pop()
+            for child in cur.winfo_children():
+                child.configure(cursor="hand2")
+                child.bind("<Button-1>", on_card_click)
+                queue.append(child)
+
         return card
 
     def createRoomCard(self, parent, name, address, price, roomId):
@@ -221,7 +227,7 @@ class ClientHomeScreen(ctk.CTkFrame):
         row = ctk.CTkFrame(card, fg_color="transparent")
         row.pack(fill="x", padx=5, pady=5)
 
-        img = Image.open("assets/placeholder.png")
+        img = Image.open("assets/placeholder.png").resize((150, 50))
         img = ctk.CTkImage(light_image=img, size=(50, 50))
         img_label = ctk.CTkLabel(row, image=img, text="")
         img_label.pack(side="left", padx=5)
