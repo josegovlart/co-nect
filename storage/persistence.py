@@ -152,3 +152,30 @@ def append_raw_json(record, jsonStr):
     with open(DATA_FILE_PATH, "w") as f:
         json.dump(data, f, indent=2)
 
+def saveCreditCard(email, cardNumber, expireDate, cardHolder):
+    dados = loadData()
+    for client in dados["clients"]:
+        if client["email"] == email:
+            client["creditCard"] = {
+                "cardNumber": cardNumber,
+                "expireDate": expireDate,
+                "cardHolder": cardHolder
+            }
+            break
+    with open(DATA_FILE_PATH, "w") as f:
+        json.dump(dados, f, indent=2)
+
+def getCreditCard(email):
+    data = loadData()
+    for client in data["clients"]:
+        if client["email"] == email:
+            card_data = client.get("creditCard")
+            if card_data:
+                from models.credit_card import CreditCard
+                return CreditCard(
+                    cardNumber=card_data["cardNumber"],
+                    expireDate=card_data["expireDate"],
+                    cardHolder=card_data["cardHolder"]
+                )
+    return None
+

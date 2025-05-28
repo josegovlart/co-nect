@@ -1,7 +1,8 @@
 import customtkinter as ctk
 from PIL import Image
 import qrcode
-
+from controllers.creditCard import CreditCardController
+from session.auth import getSession
 
 class PaymentPopup(ctk.CTkToplevel):
     def __init__(self, parent, dateTime, duration, room, latestReceipt, confirm_callback):
@@ -16,10 +17,14 @@ class PaymentPopup(ctk.CTkToplevel):
         self.room = room
         self.latestReceipt = latestReceipt
         self.confirm_callback = confirm_callback
+        self.email = getSession()["email"]
 
         self.payment_method = ctk.StringVar(value="Pix")
 
         self.content_frame = None
+
+        print(self.email)
+        self.card = CreditCardController.getCard(self.email)
 
         self.configure(fg_color="#FFFFFF")
 
@@ -77,17 +82,23 @@ class PaymentPopup(ctk.CTkToplevel):
                       fg_color="#E0D8FC", text_color="#7A50F5", corner_radius=10).pack(pady=10)
 
     def render_card(self):
-        ctk.CTkLabel(self.content_frame, text="Selecione um cartão", font=("Arial", 14, "bold"),
-                     text_color="#000000").pack(pady=10)
+        if self.card:
+            ctk.CTkLabel(self.content_frame, text="Cartão cadastrado", font=("Arial", 14, "bold"),
+                         text_color="#000000").pack(pady=10)
 
-        card_frame = ctk.CTkFrame(self.content_frame, fg_color="#F5F5F5", corner_radius=15)
-        card_frame.pack(pady=5, padx=20, fill="x")
+            card_frame = ctk.CTkFrame(self.content_frame, fg_color="#F5F5F5", corner_radius=15)
+            card_frame.pack(pady=5, padx=20, fill="x")
+            print(self.card.expireDate)
 
-        ctk.CTkLabel(card_frame, text="💳 2433 4213 4985 312  - 07/2028", text_color="#000000").pack(pady=5)
+            ctk.CTkLabel(card_frame,
+                         text=f"💳 {self.card.cardNumber}  - {self.card.expireDate}, {self.card.cardHolder}",
+                         text_color="#000000").pack(pady=5)
 
-        ctk.CTkButton(self.content_frame, text="Adicionar cartão", fg_color="#FFFFFF", border_color="#7A50F5",
-                      border_width=2, text_color="#7A50F5", hover_color="#E0D8FC",
-                      command=self.render_add_card).pack(pady=8)
+            ctk.CTkButton(self.content_frame, text="Alterar cartão", fg_color="#FFFFFF", border_color="#7A50F5",
+                          border_width=2, text_color="#7A50F5", hover_color="#E0D8FC",
+                          command=self.render_add_card).pack(pady=8)
+        else:
+            self.render_add_card()
 
     def render_add_card(self):
         for widget in self.content_frame.winfo_children():
@@ -96,17 +107,36 @@ class PaymentPopup(ctk.CTkToplevel):
         ctk.CTkLabel(self.content_frame, text="Adicione um cartão", font=("Arial", 14, "bold"),
                      text_color="#000000").pack(pady=10)
 
-        card_frame = ctk.CTkFrame(self.content_frame, fg_color="#F5F5F5", corner_radius=15)
-        card_frame.pack(pady=5, padx=20, fill="x")
-
-        ctk.CTkLabel(card_frame, text="💳 2433 4213 4985 312  - 07/2028", text_color="#000000").pack(pady=5)
-
         form_frame = ctk.CTkFrame(self.content_frame, fg_color="#FFFFFF")
         form_frame.pack(pady=5)
 
-        ctk.CTkEntry(form_frame, placeholder_text="Número do cartão", width=300).pack(pady=5)
-        ctk.CTkEntry(form_frame, placeholder_text="Data de vencimento (MM/AA)", width=300).pack(pady=5)
-        ctk.CTkEntry(form_frame, placeholder_text="Nome do portador", width=300).pack(pady=5)
+        entry_number = ctk.CTkEntry(form_frame, placeholder_text="Número do cartão", width=300)
+        entry_number.pack(pady=5)
+
+        expire_date = ctk.CTkEntry(form_frame, placeholder_text="Data de vencimento (MM/AAAA)", width=300)
+        expire_date.pack(pady=5)
+
+        card_holder = ctk.CTkEntry(form_frame, placeholder_text="Nome do portador", width=300)
+        card_holder.pack(pady=5)
+
+        def save_card():
+            cardNumber = entry_number.get().strip()
+            expireDate = expire_date.get().strip()
+            cardHolder = card_holder.get().strip()
+
+            if not cardNumber or not expireDate or not cardHolder:
+                ctk.CTkLabel(self.content_frame, text="Preencha todos os campos!", text_color="red").pack()
+                return
+
+            CreditCardController.addOrUpdateCard(
+                email=self.email,
+                cardNumber=cardNumber,
+                expireDate=expireDate,
+                cardHolder=cardHolder
+            )
+
+            self.card = CreditCardController.getCard(self.email)
+            self.update_content()
 
         button_frame = ctk.CTkFrame(self.content_frame, fg_color="#FFFFFF")
         button_frame.pack(pady=10)
@@ -115,9 +145,13 @@ class PaymentPopup(ctk.CTkToplevel):
                        border_width=2, text_color="#7A50F5", hover_color="#E0D8FC",
                        command=self.update_content).pack(side="left", padx=10)
 
-        ctk.CTkButton(button_frame, text="Adicionar cartão", fg_color="#7A50F5", hover_color="#6A3DE9",
-                       text_color="#FFFFFF", command=self.update_content).pack(side="left", padx=10)
+        ctk.CTkButton(button_frame, text="Salvar cartão", fg_color="#7A50F5", hover_color="#6A3DE9",
+                       text_color="#FFFFFF", command=save_card).pack(side="left", padx=10)
 
     def pay(self):
+        if self.payment_method.get() == "Card" and not self.card:
+            ctk.CTkLabel(self.content_frame, text="Adicione um cartão antes de pagar!", text_color="red").pack()
+            return
+
         self.confirm_callback(self.dateTime, self.duration, self.latestReceipt)
         self.destroy()
