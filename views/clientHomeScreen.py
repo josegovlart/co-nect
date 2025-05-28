@@ -113,7 +113,7 @@ class ClientHomeScreen(ctk.CTkFrame):
     def handle_reservation_click(self, reservationId):
         self.controller.show_frame(ReservationDetailsScreen, reservationId=reservationId)
 
-    def createReservation(self):
+    def goToCreateReservation(self):
         self.controller.show_frame(CreateReservationScreen, reservationData=self.reservationData)
 
     def createReservationCard(self, reservation_id, name, dateTime, duration, imagePath):
@@ -212,7 +212,7 @@ class ClientHomeScreen(ctk.CTkFrame):
                 "address": address,
                 "price": price
             }
-            self.createReservation()
+            self.goToCreateReservation()
 
         def on_enter(e):
             card.configure(fg_color="#e0e0e0")

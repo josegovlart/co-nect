@@ -63,7 +63,7 @@ class CreateReservationScreen(ctk.CTkFrame):
 
         is_valid, message = validate_reservation_fields(date, time)
         if not is_valid:
-            self.labelStatus.configure(text=message, text_color="red")
+            self.showRedMessage(message)
             return
 
         try:
@@ -87,7 +87,7 @@ class CreateReservationScreen(ctk.CTkFrame):
         is_available = ReservationController.is_room_available(self.room["id"], dateTime, duration)
 
         if not is_available:
-            self.labelStatus.configure(text="Sala já reservada nesse horário.", text_color="red")
+            self.showRedMessage("Sala já reservada nesse horário.")
             return
         
         self.labelStatus.configure(text="")
@@ -111,10 +111,6 @@ class CreateReservationScreen(ctk.CTkFrame):
         else:
             self.labelStatus.configure(text=message, text_color="red")
 
-    def open_payment_popup(self, dateTime, duration):
-        PaymentPopup(self, dateTime, duration, self.room, self.complete_reservation)
-
-
     def set_data(self, reservationData):
         self.reservationName = reservationData["name"]
         self.reservationAddress = reservationData["address"]
@@ -126,6 +122,9 @@ class CreateReservationScreen(ctk.CTkFrame):
         ctk.CTkLabel(self, text=self.reservationName, font=("Arial", 18, "bold"), text_color="black").place(x=30, y=250)
         ctk.CTkLabel(self, text=self.reservationAddress, font=("Arial", 12), text_color="gray").place(x=30, y=280)
         ctk.CTkLabel(self, text=self.reservationPrice, font=("Arial", 12, "bold"), text_color="black").place(x=30, y=300)
+
+    def showRedMessage(self, message):
+        self.labelStatus.configure(text=message, text_color="red")
 
     def goBack(self):
         from views.clientHomeScreen import ClientHomeScreen

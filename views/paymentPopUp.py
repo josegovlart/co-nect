@@ -96,7 +96,6 @@ class PaymentPopup(ctk.CTkToplevel):
         ctk.CTkLabel(self.content_frame, text="Adicione um cartão", font=("Arial", 14, "bold"),
                      text_color="#000000").pack(pady=10)
 
-        # Cartão exemplo
         card_frame = ctk.CTkFrame(self.content_frame, fg_color="#F5F5F5", corner_radius=15)
         card_frame.pack(pady=5, padx=20, fill="x")
 
