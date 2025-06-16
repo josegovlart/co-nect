@@ -18,12 +18,13 @@ class PaymentPopup(ctk.CTkToplevel):
         self.latestReceipt = latestReceipt
         self.confirm_callback = confirm_callback
         self.email = getSession()["email"]
+        self.payment_timeout_id = None
+        self.payment_timeout_seconds = 900
 
         self.payment_method = ctk.StringVar(value="Pix")
 
         self.content_frame = None
 
-        print(self.email)
         self.card = CreditCardController.getCard(self.email)
 
         self.configure(fg_color="#FFFFFF")
@@ -58,11 +59,16 @@ class PaymentPopup(ctk.CTkToplevel):
                        text_color="#FFFFFF", command=self.pay).pack(side="left", padx=10)
 
     def update_content(self):
+        if self.payment_timeout_id:
+            self.after_cancel(self.payment_timeout_id)
+            self.payment_timeout_id = None
+
         for widget in self.content_frame.winfo_children():
             widget.destroy()
 
         if self.payment_method.get() == "Pix":
             self.render_pix()
+            self.start_payment_timeout()
         else:
             self.render_card()
 
@@ -88,7 +94,6 @@ class PaymentPopup(ctk.CTkToplevel):
 
             card_frame = ctk.CTkFrame(self.content_frame, fg_color="#F5F5F5", corner_radius=15)
             card_frame.pack(pady=5, padx=20, fill="x")
-            print(self.card.expireDate)
 
             ctk.CTkLabel(card_frame,
                          text=f"💳 {self.card.cardNumber}  - {self.card.expireDate}, {self.card.cardHolder}",
@@ -155,3 +160,10 @@ class PaymentPopup(ctk.CTkToplevel):
 
         self.confirm_callback(self.dateTime, self.duration, self.latestReceipt)
         self.destroy()
+    
+    def start_payment_timeout(self):
+        self.payment_timeout_id = self.after(self.payment_timeout_seconds * 1000, self.handle_payment_timeout)
+
+    def handle_payment_timeout(self):
+        ctk.CTkLabel(self.content_frame, text="Tempo esgotado! Fechando a tela de pagamento...", text_color="red").pack(pady=10)
+        self.after(2000, self.destroy)
