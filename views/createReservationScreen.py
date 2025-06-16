@@ -5,7 +5,7 @@ from PIL import Image, ImageTk
 from session.auth import getSession
 from styles import theme
 from controllers.reservation import ReservationController
-from utils.validations import validate_reservation_fields
+from utils.validations import validate_reservation_fields, is_after_now, is_valid_date_format, is_valid_time_format
 from views.paymentPopUp import PaymentPopup
 
 
@@ -39,7 +39,13 @@ class CreateReservationScreen(ctk.CTkFrame):
         image_label.place(x=30, y=60)
         
         ctk.CTkLabel(self, text="Duração", font=("Arial", 14, "bold"), text_color="black").place(x=30, y=340)
-        self.duration = ctk.CTkOptionMenu(self, fg_color=theme.BACKGROUND_COLOR, values=["1h", "2h", "3h", "4h"], text_color=theme.TEXT_COLOR)
+        self.duration = ctk.CTkOptionMenu(
+            self, 
+            fg_color=theme.BACKGROUND_COLOR, 
+            values=["1h", "2h", "3h", "4h"], 
+            text_color=theme.TEXT_COLOR,
+            command=self.update_total_price
+        )
         self.duration.set("2h")
         self.duration.place(x=30, y=370)
 
@@ -58,42 +64,39 @@ class CreateReservationScreen(ctk.CTkFrame):
         reserve_button.place(x=30, y=600)
 
     def reserve(self):
-        date = self.date_entry.get().replace("/", "-")
+        date = self.date_entry.get()
         time = self.time_entry.get()
 
         is_valid, message = validate_reservation_fields(date, time)
-        if not is_valid:
-            self.showRedMessage(message)
-            return
-
-        try:
-            day, month, year = date.split("-")
-            date_formatted = f"{year}-{month}-{day}"
-            dateTime = f"{date_formatted} {time}"
-        except ValueError:
-            self.labelStatus.configure(text="Data inválida. Use o formato DD/MM/AAAA.", text_color="red")
-            return
-
-        try:
-            datetime.strptime(time, "%H:%M")
-        except ValueError:
-            self.labelStatus.configure(text="Horário inválido. Use o formato HH:MM.", text_color="red")
-            return
 
         duration = int(self.duration.get().replace('h', ''))
         room = self.room
         latestReceipt = "IMPLEMENTAR"  # implementar isso
 
-        is_available = ReservationController.is_room_available(self.room["id"], dateTime, duration)
-
-        if not is_available:
-            self.showRedMessage("Sala já reservada nesse horário.")
-            return
+        date_valid = is_valid_date_format(date)
+        if is_valid:
+            if date_valid:
+                time_valid = is_valid_time_format(time)
+                if time_valid:
+                    after_now = is_after_now(date + " " + time)
+                    if after_now:
+                        dt = datetime.strptime(date + " " + time, "%d/%m/%Y %H:%M")
+                        formattedDatetime = dt.strftime("%Y-%m-%d %H:%M")
+                        is_available = ReservationController.is_room_available(self.room["id"], formattedDatetime, duration)
+                        if is_available:
+                            self.labelStatus.configure(text="")
+                            PaymentPopup(self, formattedDatetime, duration, room, latestReceipt, self.complete_reservation)
+                        else:
+                            self.showRedMessage("O horário escolhido não está disponível. \nEscolha outro horário ou outra data.")
+                    else:
+                        self.showRedMessage("A data e o horário escolhidos\n devem ser após o dia atual.")
+                else:
+                    self.showRedMessage("Horário inválido: Use o formato HH:MM.")
+            else:
+                self.showRedMessage("Data inválida. Use o formato DD/MM/AAAA.")
+        else:
+            self.showRedMessage(message)
         
-        self.labelStatus.configure(text="")
-        
-        PaymentPopup(self, dateTime, duration, room, latestReceipt, self.complete_reservation)
-
     def complete_reservation(self, dateTime, duration, latestReceipt):
         success, client = ReservationController.clientData(getSession()["email"])
         success, message = ReservationController.reserveRoom(dateTime, duration, self.room, latestReceipt, client=client)
@@ -123,8 +126,21 @@ class CreateReservationScreen(ctk.CTkFrame):
         ctk.CTkLabel(self, text=self.reservationAddress, font=("Arial", 12), text_color="gray").place(x=30, y=280)
         ctk.CTkLabel(self, text=self.reservationPrice, font=("Arial", 12, "bold"), text_color="black").place(x=30, y=300)
 
+        price_per_hour = float(self.reservationPrice.replace("R$", "").replace("/h", "").strip())
+        default_duration = int(self.duration.get().replace('h', ''))
+        self.total_price = price_per_hour * default_duration
+
+        self.total_price_label = ctk.CTkLabel(self, text=f"Total: R${self.total_price:.2f}", font=("Arial", 12, "bold"), text_color="black")
+        self.total_price_label.place(x=30, y=320)
+
     def showRedMessage(self, message):
         self.labelStatus.configure(text=message, text_color="red")
+
+    def update_total_price(self, selected_duration):
+        price_per_hour = float(self.reservationPrice.replace("R$", "").replace("/h", "").strip())
+        duration = int(selected_duration.replace('h', ''))
+        total = price_per_hour * duration
+        self.total_price_label.configure(text=f"Total: R${total:.2f}")
 
     def goBack(self):
         from views.clientHomeScreen import ClientHomeScreen
