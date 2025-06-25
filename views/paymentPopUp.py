@@ -115,33 +115,21 @@ class PaymentPopup(ctk.CTkToplevel):
         form_frame = ctk.CTkFrame(self.content_frame, fg_color="#FFFFFF")
         form_frame.pack(pady=5)
 
-        entry_number = ctk.CTkEntry(form_frame, placeholder_text="Número do cartão", width=300)
-        entry_number.pack(pady=5)
+        self.entry_number = ctk.CTkEntry(form_frame, placeholder_text="Número do cartão", width=300)
+        self.entry_number.pack(pady=5)
 
-        expire_date = ctk.CTkEntry(form_frame, placeholder_text="Data de vencimento (MM/AAAA)", width=300)
-        expire_date.pack(pady=5)
+        self.expire_date = ctk.CTkEntry(form_frame, placeholder_text="Data de vencimento (MM/AAAA)", width=300)
+        self.expire_date.pack(pady=5)
 
-        card_holder = ctk.CTkEntry(form_frame, placeholder_text="Nome do portador", width=300)
-        card_holder.pack(pady=5)
+        self.card_holder = ctk.CTkEntry(form_frame, placeholder_text="Nome do portador", width=300)
+        self.card_holder.pack(pady=5)
 
-        def save_card():
-            cardNumber = entry_number.get().strip()
-            expireDate = expire_date.get().strip()
-            cardHolder = card_holder.get().strip()
-
-            if not cardNumber or not expireDate or not cardHolder:
-                ctk.CTkLabel(self.content_frame, text="Preencha todos os campos!", text_color="red").pack()
-                return
-
-            CreditCardController.addOrUpdateCard(
-                email=self.email,
-                cardNumber=cardNumber,
-                expireDate=expireDate,
-                cardHolder=cardHolder
-            )
-
-            self.card = CreditCardController.getCard(self.email)
-            self.update_content()
+        if self.card:
+            self.entry_number.insert(0, self.card.cardNumber)
+            self.expire_date.insert(0, self.card.expireDate)
+            print('cartao cadastrado')
+            print(self.card.cardHolder)
+            self.card_holder.insert(0, self.card.cardHolder)
 
         button_frame = ctk.CTkFrame(self.content_frame, fg_color="#FFFFFF")
         button_frame.pack(pady=10)
@@ -151,7 +139,7 @@ class PaymentPopup(ctk.CTkToplevel):
                        command=self.update_content).pack(side="left", padx=10)
 
         ctk.CTkButton(button_frame, text="Salvar cartão", fg_color="#7A50F5", hover_color="#6A3DE9",
-                       text_color="#FFFFFF", command=save_card).pack(side="left", padx=10)
+                       text_color="#FFFFFF", command=self.save_card).pack(side="left", padx=10)
 
     def pay(self):
         if self.payment_method.get() == "Card" and not self.card:
@@ -167,3 +155,48 @@ class PaymentPopup(ctk.CTkToplevel):
     def handle_payment_timeout(self):
         ctk.CTkLabel(self.content_frame, text="Tempo esgotado! Fechando a tela de pagamento...", text_color="red").pack(pady=10)
         self.after(2000, self.destroy)
+
+    def save_card(self):
+        cardNumber = self.entry_number.get().strip()
+        expireDate = self.expire_date.get().strip()
+        cardHolder = self.card_holder.get().strip()
+
+        for widget in self.content_frame.winfo_children():
+            if isinstance(widget, ctk.CTkLabel) and widget.cget("text_color") == "red":
+                widget.destroy()
+
+        if not cardNumber or not expireDate or not cardHolder:
+            ctk.CTkLabel(self.content_frame, text="Preencha todos os campos!", text_color="red").pack()
+            return
+
+        if not cardNumber.isdigit() or not (13 <= len(cardNumber) <= 19):
+            ctk.CTkLabel(self.content_frame, text="Número de cartão inválido!", text_color="red").pack()
+            return
+
+        if len(expireDate) != 5 or expireDate[2] != "/":
+            ctk.CTkLabel(self.content_frame, text="Data inválida! Use o formato MM/AA", text_color="red").pack()
+            return
+
+        try:
+            month, year = expireDate.split("/")
+            month = int(month)
+            year = int(year)
+
+            if month < 1 or month > 12:
+                raise ValueError
+            if year < 25:
+                ctk.CTkLabel(self.content_frame, text="Ano inválido! Use um ano a partir de 25.", text_color="red").pack()
+                return
+        except ValueError:
+            ctk.CTkLabel(self.content_frame, text="Data de validade inválida!", text_color="red").pack()
+            return
+
+        CreditCardController.addOrUpdateCard(
+            email=self.email,
+            cardNumber=cardNumber,
+            expireDate=expireDate,
+            cardHolder=cardHolder
+        )
+
+        self.card = CreditCardController.getCard(self.email)
+        self.update_content()
