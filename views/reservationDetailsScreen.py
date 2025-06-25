@@ -75,10 +75,11 @@ class ReservationDetailsScreen(ctk.CTkFrame):
         duration = reservationData["duration"]
         reservationPrice = roomHourlyRate * duration
 
-        ctk.CTkLabel(self, text=f"Duração: {duration}h", font=("Arial", 14, "bold"), text_color="black").place(x=30, y=340)
         ctk.CTkLabel(self, text=f"{roomName}", font=("Arial", 18, "bold"), text_color="black").place(x=30, y=250)
         ctk.CTkLabel(self, text=f"{roomAddress}", font=("Arial", 12), text_color="gray").place(x=30, y=280)
-        ctk.CTkLabel(self, text=f"R${reservationPrice:.2f}", font=("Arial", 12, "bold"), text_color="black").place(x=30, y=300)
+        ctk.CTkLabel(self, text=f"R${roomHourlyRate:.2f}/h", font=("Arial", 12, "bold"), text_color="black").place(x=30, y=300)
+        ctk.CTkLabel(self, text=f"Total: R${reservationPrice:.2f}", font=("Arial", 12, "bold"), text_color="black").place(x=30, y=320)
+        ctk.CTkLabel(self, text=f"Duração: {duration}h", font=("Arial", 14, "bold"), text_color="black").place(x=30, y=340)
 
     def handle_reschedule_click_wrapper(self):
         reservation_id = self.reservationId
@@ -99,3 +100,12 @@ class ReservationDetailsScreen(ctk.CTkFrame):
 
     def goBack(self):
         self.controller.show_frame(self.controller.__class__)
+
+    def onShow(self):
+        ctk.CTkLabel(self, text="Data", font=("Arial", 14, "bold")).place(x=30, y=390)
+        self.date_entry = ctk.CTkEntry(self, placeholder_text="Ex: 24/05/2025")
+        self.date_entry.place(x=30, y=430)
+        ctk.CTkLabel(self, text="Horário", font=("Arial", 14, "bold")).place(x=30, y=470)
+        self.time_entry = ctk.CTkEntry(self, placeholder_text="Ex: 09:00")
+        self.time_entry.place(x=30, y=500)
+        self.show_message(True, "")  # clear message field

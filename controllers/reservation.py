@@ -49,6 +49,8 @@ class ReservationController:
     @staticmethod
     def reschedule_reservation(reservation_id, date, time):
         fields_filled = validate_blank_fields([reservation_id, date, time])
+        success = False
+        message = ""
         if fields_filled:
             date_valid = is_valid_date_format(date)
             if date_valid:
@@ -64,17 +66,19 @@ class ReservationController:
                         available = ReservationController.is_room_available(room_id, formatted, current_duration, reservation_id)
                         if available:
                             ReservationController.update_reservation_date(reservation_id, date, time)
-                            return True, "Reserva remarcada com sucesso."
+                            success = True
+                            message = "Reserva remarcada com sucesso."
                         else:
-                            return False, "O horário escolhido não está disponível. Escolha outro horário ou outra data."
+                            message = "O horário escolhido não está disponível. Escolha outro horário ou outra data."
                     else:
-                        return False, "A data e o horário escolhidos devem ser após o dia atual."
+                        message = "A data e o horário escolhidos devem ser após o dia atual."
                 else:
-                    return False, "Horário inválido: Use o formato HH:MM."
+                    message = "Horário inválido: Use o formato HH:MM."
             else:
-                return False, "Data inválida. Use o formato DD/MM/AAAA."
+                message = "Data inválida. Use o formato DD/MM/AAAA."
         else:
-            return False, "Todos os campos são obrigatórios."
+            message = "Todos os campos são obrigatórios."
+        return success, message
 
     @staticmethod
     def update_reservation_date(reservation_id, date, time):
